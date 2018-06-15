@@ -46,20 +46,19 @@
             android:orientation="vertical">
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/layout_email"
                 android:layout_width="match_parent"
-                android:hint="User Name"
-                android:drawableTint="#FF4081"
                 android:layout_height="wrap_content">
 
-
-                <AutoCompleteTextView
-                    android:id="@+id/email"
+                <EditText
+                    android:id="@+id/layout_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1"
+                    android:imeOptions="actionUnspecified"
+                    android:inputType="text"
+                    android:drawableTint="#FF4081"
+                    android:hint="User Name"
                     android:singleLine="true"/>
+
 
             </android.support.design.widget.TextInputLayout>
 
