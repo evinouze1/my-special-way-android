@@ -98,6 +98,7 @@
 
     <string name="notification_navigation_title">שיעור %1$s</string>
     <string name="notification_navigation_text">%2$s, בוא נצא לשיעור %1$s!</string>
+    <string name="permission_rationale">permission</string>
 
 
 </resources>
