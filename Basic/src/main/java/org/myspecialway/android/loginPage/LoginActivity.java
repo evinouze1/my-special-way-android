@@ -117,6 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("onResponse");
                 if (response.isSuccessful()) {
                     loginAccessToken = response.body();
+                    //TODO - Maoz - implement what happens after successful login
                 } else {
                     //TODO - Maoz - implement what happens when login request fails
                 }
