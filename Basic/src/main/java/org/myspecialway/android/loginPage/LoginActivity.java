@@ -1,5 +1,6 @@
 package org.myspecialway.android.loginPage;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
+import org.myspecialway.android.ListExamplesActivity;
 import org.myspecialway.android.R;
 
 import okhttp3.OkHttpClient;
@@ -25,16 +27,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private  EditText mEmailView;
+    private EditText mEmailView;
     private EditText mPasswordView;
     private View mLoginFormView;
-    private LoginAccessToken loginAccessToken ;
+    private LoginAccessToken loginAccessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mEmailView =  findViewById(R.id.layout_email);
+        mEmailView = findViewById(R.id.layout_email);
 
         mPasswordView = mLoginFormView.findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -61,19 +63,35 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void attemptLogin() {
-
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
         String password = mPasswordView.getText().toString();
         String username = mEmailView.getText().toString();
-       login(username, password);
+        login(username, password);
 
-//       Intent intent = new Intent(this, ListExamplesActivity.class);
-//       startActivity(intent);
-//       finish();
 
-        }
+    }
+
+
+    /**
+     * login success pass the user to the next screen
+     */
+    private void loginSusses() {
+        Intent intent = new Intent(this, ListExamplesActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+    /**
+     * login fail
+     * <p>
+     * TODO: need to defined error string
+     */
+    private void loginFail() {
+        mEmailView.setError(getString(R.string.error_incorrect_password));
+        mPasswordView.setError(getString(R.string.error_incorrect_password));
+        View focusView = mEmailView;
+        focusView.requestFocus();
+    }
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
@@ -86,8 +104,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
-    public void login(String username, String password){
+    public void login(String username, String password) {
         //Adding logs
         HttpLoggingInterceptor interceptor = getInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -106,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         object.addProperty("password", password);
 
         //Creating retrofit call
-        Call<LoginAccessToken> call = userLogin.userLoginRequest(object,"application/json");
+        Call<LoginAccessToken> call = userLogin.userLoginRequest(object, "application/json");
 
         //Placing call in execution queue
         call.enqueue(new Callback<LoginAccessToken>() {
@@ -117,9 +134,10 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("onResponse");
                 if (response.isSuccessful()) {
                     loginAccessToken = response.body();
-                    //TODO - Maoz - implement what happens after successful login
+                    loginSusses();
+
                 } else {
-                    //TODO - Maoz - implement what happens when login request fails
+                    loginFail();
                 }
             }
 
