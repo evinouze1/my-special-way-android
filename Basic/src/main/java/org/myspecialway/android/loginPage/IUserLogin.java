@@ -1,6 +1,8 @@
-package org.myspecialway.android.login;
+package org.myspecialway.android.loginPage;
 
 import com.google.gson.JsonObject;
+
+import org.myspecialway.android.loginPage.LoginAccessToken;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

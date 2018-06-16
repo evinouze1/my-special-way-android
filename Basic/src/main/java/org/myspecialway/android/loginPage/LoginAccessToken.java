@@ -1,4 +1,4 @@
-package org.myspecialway.android.login;
+package org.myspecialway.android.loginPage;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -4,6 +4,10 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 
+import org.myspecialway.android.loginPage.IUserLogin;
+import org.myspecialway.android.loginPage.LoginAccessToken;
+import org.myspecialway.android.loginPage.LoginConstants;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;

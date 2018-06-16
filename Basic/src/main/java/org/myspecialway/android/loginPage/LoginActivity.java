@@ -1,7 +1,7 @@
 package org.myspecialway.android.loginPage;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,15 +11,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+
 import org.myspecialway.android.R;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
     private  EditText mEmailView;
     private EditText mPasswordView;
     private View mLoginFormView;
-
+    private LoginAccessToken loginAccessToken ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,26 +67,11 @@ public class LoginActivity extends AppCompatActivity {
 
         String password = mPasswordView.getText().toString();
         String username = mEmailView.getText().toString();
-
-        /// pass the user to the next activity
-        /**
-         *  TODO : Use Login class to save JWT token
-         */
-
-        //LoginClient.login(username/);
-
-        /**
-         *  TODO : on success pass the user to the next activity
-         */
+       login(username, password);
 
 //       Intent intent = new Intent(this, ListExamplesActivity.class);
 //       startActivity(intent);
 //       finish();
-
-
-            /**
-             *  TODO : login fail show the error to the user
-             */
 
         }
 
@@ -89,6 +83,73 @@ public class LoginActivity extends AppCompatActivity {
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
+    }
+
+
+
+    public void login(String username, String password){
+        //Adding logs
+        HttpLoggingInterceptor interceptor = getInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+        //Creating retrofit client
+        Retrofit.Builder builder = getRetrofitBuilder(client);
+        Retrofit retrofit = builder.build();
+
+        //Creating user login infra
+        IUserLogin userLogin = retrofit.create(IUserLogin.class);
+
+        //Populating parameters to json
+        JsonObject object = new JsonObject();
+        object.addProperty("username", username);
+        object.addProperty("password", password);
+
+        //Creating retrofit call
+        Call<LoginAccessToken> call = userLogin.userLoginRequest(object,"application/json");
+
+        //Placing call in execution queue
+        call.enqueue(new Callback<LoginAccessToken>() {
+
+            //Implementing callback
+            @Override
+            public void onResponse(Call<LoginAccessToken> call, Response<LoginAccessToken> response) {
+                System.out.println("onResponse");
+                if (response.isSuccessful()) {
+                    loginAccessToken = response.body();
+                } else {
+                    //TODO - Maoz - implement what happens when login request fails
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginAccessToken> call, Throwable t) {
+                //TODO - Maoz - implement what happens when failing to send the request
+            }
+        });
+    }
+
+    @NonNull
+    private Retrofit.Builder getRetrofitBuilder(OkHttpClient client) {
+        return new Retrofit.Builder()
+                .baseUrl(LoginConstants.MSW_SERVER_URL)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create());
+    }
+
+    @NonNull
+    private HttpLoggingInterceptor getInterceptor() {
+        return new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
+            @Override
+            public void log(String message) {
+                System.out.println(message);
+            }
+        });
+    }
+
+
+    public LoginAccessToken getLoginAccessToken() {
+        return loginAccessToken;
     }
 
 }
